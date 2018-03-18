@@ -15,40 +15,53 @@ library(ggraph)
 load("benign_sysc.Rda")
 load("malicious_sysc.Rda")
 
-filePath_b <- "../data/benign"
-temp_b <- list.files(filePath_b, pattern="*.json", full.names=TRUE)
-names_b <- str_extract(temp_b, "benign_...")
-data_temp <-  fromJSON(paste(readLines(temp_b[1]), collapse = ""))
-syscalls <- unlist(data_temp, use.names = FALSE)
-df_benign <- data.frame(text = c(syscalls), book = names_b[1])
-for(i in 2:length(temp_b)) {
-  data_temp <-  fromJSON(paste(readLines(temp_b[i]), collapse = ""))
-  syscalls <- unlist(data_temp, use.names = FALSE)
-  temp_df <- data.frame(text = syscalls, book = names_b[i])
-  df_benign <- rbind(df_benign, temp_df)
-}
+## load benign data
+# filePath_b <- "../data/benign"
+# temp_b <- list.files(filePath_b, pattern="*.json", full.names=TRUE)
+# names_b <- str_extract(temp_b, "benign_...")
+# data_temp <-  fromJSON(paste(readLines(temp_b[1]), collapse = ""))
+# syscalls <- unlist(data_temp, use.names = FALSE)
+# df_benign <- data.frame(text = c(syscalls), book = names_b[1])
+# for(i in 2:length(temp_b)) {
+#   data_temp <-  fromJSON(paste(readLines(temp_b[i]), collapse = ""))
+#   syscalls <- unlist(data_temp, use.names = FALSE)
+#   temp_df <- data.frame(text = syscalls, book = names_b[i])
+#   df_benign <- rbind(df_benign, temp_df)
+# }
 
 ##save data.frame
 #save(df_benign,file="benign_sysc.Rda")
 
-filePath_m <- "../data/malicious"
-temp_m <- list.files(filePath_m, pattern="*.json", full.names=TRUE)
-names_m <- str_extract(temp_m, "malicious_...")
+## load malicious data
+# filePath_m <- "../data/malicious"
+# temp_m <- list.files(filePath_m, pattern="*.json", full.names=TRUE)
+# names_m <- str_extract(temp_m, "malicious_...")
+# data_temp <-  fromJSON(paste(readLines(temp_m[1]), collapse = ""))
+# syscalls <- unlist(data_temp, use.names = FALSE)
+# df_malicious <- data.frame(text = c(syscalls), book = names_m[1])
+# for(i in 2:length(temp_m)) {
+#   data_temp <-  fromJSON(paste(readLines(temp_m[i]), collapse = ""))
+#   syscalls <- unlist(data_temp, use.names = FALSE)
+#   temp_df <- data.frame(text = syscalls, book = names_m[i])
+#   df_malicious <- rbind(df_malicious, temp_df)
+# }
+# save(df_malicious,file="malicious_sysc.Rda")
 
-data_temp <-  fromJSON(paste(readLines(temp_m[1]), collapse = ""))
+filePath <- "data"
+temp <- list.files(filePath, pattern="*.json", full.names=TRUE)
+data_temp <- fromJSON(paste(readLines(temp[1]), collapse = ""))
 syscalls <- unlist(data_temp, use.names = FALSE)
-df_malicious <- data.frame(text = c(syscalls), book = names_m[1])
-for(i in 2:length(temp_m)) {
-  data_temp <-  fromJSON(paste(readLines(temp_m[i]), collapse = ""))
-  syscalls <- unlist(data_temp, use.names = FALSE)
-  temp_df <- data.frame(text = syscalls, book = names_m[i])
-  df_malicious <- rbind(df_malicious, temp_df)
+names <- c("messenger", "momentWeChat", "MsgWeChat", "whatsapp")
+df_apps <- data.frame(text = c(syscalls), book = names[1])
+for(i in 2:length(names)) {
+    data_temp <-  fromJSON(paste(readLines(temp[i]), collapse = ""))
+    syscalls <- unlist(data_temp, use.names = FALSE)
+    temp_df <- data.frame(text = syscalls, book = names[i])
+    df_apps <- rbind(df_apps, temp_df)
 }
-save(df_malicious,file="malicious_sysc.Rda")
-
 
 # bigram_benign <- df_benign[df_benign$book == names_b[10],] %>% unnest_tokens(bigram, text, token = "ngrams", n = 2)
-bigram_benign <- df_benign %>% unnest_tokens(bigram, text, token = "ngrams", n = 3)
+bigram_benign <- df_benign %>% unnest_tokens(bigram, text, token = "ngrams", n = 2)
 bigrams_sep <- bigram_benign %>% separate(bigram, c("word1", "word2", "word3"), sep = " ")
 
 bigram_malicious <- df_malicious %>% unnest_tokens(bigram, text, token = "ngrams", n = 2)
